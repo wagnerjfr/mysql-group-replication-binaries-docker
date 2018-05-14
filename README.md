@@ -7,6 +7,9 @@ Setting up Group Replication using MySQL binaries and Docker containers
 1. https://dev.mysql.com/doc/refman/8.0/en/group-replication.html
 2. https://mysqlhighavailability.com/mysql-group-replication-its-in-5-7-17-ga/
 
+## Another approach, using MySQL Images
+https://github.com/wagnerjfr/mysql-group-replication-docker
+
 ## Prerequisites
 1. Docker installed
 2. Do not run while connected to VPN
