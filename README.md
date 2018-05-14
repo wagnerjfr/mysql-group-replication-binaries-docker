@@ -1,7 +1,7 @@
 # MySQL Group Replication using MySQL binaries and Docker containers
 Setting up Group Replication using MySQL binaries and Docker containers
 
-#### The MySQL Group Replication feature is a multi-master update anywhere replication plugin  for MySQL with built-in conflict detection and resolution, automatic distributed recovery, and group membership.
+#### The MySQL Group Replication feature is a multi-master update anywhere replication plugin  for MySQL with built-in conflict detection and resolution, automatic distributed recovery and group membership.
 
 ## References
 1. https://dev.mysql.com/doc/refman/8.0/en/group-replication.html
@@ -124,11 +124,12 @@ To get container's IP from all the containers, run:
 ```
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node1 node2 node3
 ```
-In our example, it should print:
+In our example, it prints:
+```
 172.19.0.2
 172.19.0.3
 172.19.0.4
-
+```
 To fetch all the container's information:
 ```
 docker inspect node1
@@ -208,7 +209,7 @@ docker network disconnect group1 node3
 Running the query (*SELECT * FROM performance_schema.replication_group_members;*) in node3 terminal we should see:
 ![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries3.png)
 
-Running the same query in node1 terminal we should noticed that node3 was expelled from the group:
+Running the same query in node1 terminal, we noticed that node3 was expelled from the group:
 ![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries4.png)
 
 To kill running container(s):
