@@ -114,7 +114,7 @@ The containers are running in background. To see the containers, run:
 ```
 docker ps -a
 ```
-**image**
+![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries1.png)
 
 Fetch the logs of a container (ex. in node1), run:
 ```
@@ -195,7 +195,7 @@ START GROUP_REPLICATION;
 SELECT * FROM performance_schema.replication_group_members;
 ```
 By now, you should see:
-**image**
+![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries2.png)
 
 ## Dropping network in one of the nodes
 
@@ -205,8 +205,11 @@ In another terminal, let's disconnect node3 from the network:
 ```
 docker network disconnect group1 node3
 ```
-Running the query in node3 terminal we should see:
-**image**
+Running the query (*SELECT * FROM performance_schema.replication_group_members;*) in node3 terminal we should see:
+![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries3.png)
+
+Running the same query in node1 terminal we should noticed that node3 was expelled from the group:
+![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries4.png)
 
 To kill running container(s):
 ```
