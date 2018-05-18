@@ -40,21 +40,24 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 RUN useradd rpl_user
+
 WORKDIR /mysql
+
 USER rpl_user
 
 ENV SERVERID 1
 ENV DATADIR d0
+ENV PORT 3306
 
 CMD rm -rf $PWD/$DATADIR && ./bin/mysqld --no-defaults --datadir=$PWD/$DATADIR \
   --basedir=$PWD --initialize-insecure && \
   ./bin/mysqld --no-defaults --basedir=$PWD --datadir=$PWD/$DATADIR \
   --socket=/tmp/mysql.0.sock --log-bin=mysql-bin-1.log --server_id=$SERVERID \
-  --port=3308 --enforce-gtid-consistency --log-slave-updates --gtid-mode=on \
+  --port=$PORT --enforce-gtid-consistency --log-slave-updates --gtid-mode=on \
   --transaction-write-set-extraction=XXHASH64 --binlog-checksum=NONE \
   --master-info-repository=TABLE --relay_log_info_repository=TABLE \
   --plugin-dir=lib/plugin/ --plugin-load=group_replication.so --relay-log-recovery=on \
-  --group_replication_start_on_boot=0
+  --group_replication_start_on_boot=0
 ```
 Now that the Dockerfile is ready, let’s create the image.
 
@@ -92,15 +95,39 @@ It's also possible to use different MySQL versions.
 
 The command to start the containers is:
 
-*docker run -d --rm --net [network_name] --name [container_name] --hostname [container_hostname] -v [Path-MySQL-Folder]/:/mysql -e DATADIR=[data_directory] -e SERVERID=[server_id] mysqlubuntu*
+*docker run -d --rm --net [network_name] --name [container_name] --hostname [container_hostname] -v [Path-MySQL-Folder]/:/mysql -e DATADIR=[data_directory] -e SERVERID=[server_id] -e PORT=[port_number]mysqlubuntu*
 
 Run the below commands:
 ```
-docker run -d --rm --net group1 --name node1 --hostname node1 -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql -e DATADIR='d0' -e SERVERID=1 mysqlubuntu
+docker run -d --rm \
+  --net group1 \
+  --name node1 \
+  --hostname node1 \
+  -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql \
+  -e DATADIR='d0' \
+  -e SERVERID=1 \
+  -e PORT=3308 \
+  mysqlubuntu
 
-docker run -d --rm --net group1 --name node2 --hostname node2 -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql -e DATADIR='d1' -e SERVERID=2 mysqlubuntu
+docker run -d --rm \
+  --net group1 \
+  --name node2 \
+  --hostname node2 \
+  -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql \
+  -e DATADIR='d1' \
+  -e SERVERID=2 \
+  -e PORT=3308 \
+  mysqlubuntu
 
-docker run -d --rm --net group1 --name node3 --hostname node3 -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql -e DATADIR='d2' -e SERVERID=3 mysqlubuntu
+docker run -d --rm \
+  --net group1 \
+  --name node3 \
+  --hostname node3 \
+  -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql \
+  -e DATADIR='d2' \
+  -e SERVERID=3 \
+  -e PORT=3308 \
+  mysqlubuntu
 ```
 | Command       | Description   |
 | ------------- |:-------------:|
