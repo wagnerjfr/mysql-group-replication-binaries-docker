@@ -100,7 +100,7 @@ The command to start the containers is:
 
 Run the below commands:
 ``` console
-$ docker run -d --rm \
+docker run -d --rm \
   --net group1 \
   --name node1 \
   --hostname node1 \
@@ -110,7 +110,7 @@ $ docker run -d --rm \
   -e PORT=3308 \
   mysqlubuntu
 
-$ docker run -d --rm \
+docker run -d --rm \
   --net group1 \
   --name node2 \
   --hostname node2 \
@@ -120,7 +120,7 @@ $ docker run -d --rm \
   -e PORT=3308 \
   mysqlubuntu
 
-$ docker run -d --rm \
+docker run -d --rm \
   --net group1 \
   --name node3 \
   --hostname node3 \
