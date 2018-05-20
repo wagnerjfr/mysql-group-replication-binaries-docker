@@ -30,7 +30,7 @@ In my example, I'm going to use: */home/wfranchi/MySQL/mysql-8.0.11*
 Create a file named **Dockerfile** in a directory of your choice.
 
 Copy and paste the below content to the file. Save and close it.
-```
+```Dockerfile
 FROM ubuntu:16.04
 
 MAINTAINER Wagner Franchin <wagner.franchin@oracle.com>
@@ -63,31 +63,31 @@ CMD rm -rf $PWD/$DATADIR && ./bin/mysqld --no-defaults --datadir=$PWD/$DATADIR \
 Now that the Dockerfile is ready, let’s create the image.
 
 Go to the folder where Dockerfile is and run this command:
-```
-docker build -t mysqlubuntu .
+```console
+$ docker build -t mysqlubuntu .
 ```
 A path is a mandatory argument for the build command. We used . as the path because we’re currently in the same directory. We also used the -t flag to tag the image.
 The name of the image is mysqlubuntu and can be any name you want.
 
 Check if the image was created:
-```
-docker images
+```console
+$ docker images
 ```
 If the build was successful you should have:
-```
+```console
 $ docker images
 REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
 mysqlubuntu          latest              422a05ed125c        10 seconds ago      114MB
 ```
 ## Creating a Docker network
-```
-docker network create group1
+```console
+$ docker network create group1
 ```
 Just need to create it once, unless you remove it from docker network.
 
 To see all Docker Network:
-```
-docker network ls
+```console
+$ docker network ls
 ```
 
 ## Creating 3 containers with shared MySQL
@@ -99,8 +99,8 @@ The command to start the containers is:
 *docker run -d --rm --net [network_name] --name [container_name] --hostname [container_hostname] -v [Path-MySQL-Folder]/:/mysql -e DATADIR=[data_directory] -e SERVERID=[server_id] -e PORT=[port_number]mysqlubuntu*
 
 Run the below commands:
-```
-docker run -d --rm \
+``` console
+$ docker run -d --rm \
   --net group1 \
   --name node1 \
   --hostname node1 \
@@ -110,7 +110,7 @@ docker run -d --rm \
   -e PORT=3308 \
   mysqlubuntu
 
-docker run -d --rm \
+$ docker run -d --rm \
   --net group1 \
   --name node2 \
   --hostname node2 \
@@ -120,7 +120,7 @@ docker run -d --rm \
   -e PORT=3308 \
   mysqlubuntu
 
-docker run -d --rm \
+$ docker run -d --rm \
   --net group1 \
   --name node3 \
   --hostname node3 \
@@ -142,28 +142,28 @@ docker run -d --rm \
 | -e            | environment variable |
 
 The containers are running in background. To see the containers, run:
-```
-docker ps -a
+```console
+$ docker ps -a
 ```
 ![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries1.png)
 
 Fetch the logs of a container (ex. in node1), run:
-```
-docker logs node1
+```console
+$ docker logs node1
 ```
 To get container's IP from all the containers, run:
+```console
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node1 node2 node3
 ```
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node1 node2 node3
-```
-In our example, it prints:
-```
+In our example, it prints something like:
+```console
 172.19.0.2
 172.19.0.3
 172.19.0.4
 ```
 To fetch all the container's information:
-```
-docker inspect node1
+```console
+$ docker inspect node1
 ```
 
 ## Creating a group replication with 3 nodes
@@ -172,8 +172,8 @@ Open 3 new terminals and run the below commands in each one:
 
 ### node1
 Access MySQL server inside the container:
-```
-docker exec -it node1 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
+```console
+$ docker exec -it node1 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 ```
 | Command       | Description   |
 | ------------- |:-------------:|
@@ -181,7 +181,7 @@ docker exec -it node1 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 | -it           | iterative mode using container's OS shell |
 
 Run these commands in server console:
-```
+```mysql
 create user 'root'@'%';
 GRANT ALL  ON * . * TO root@'%';
 flush privileges;
@@ -195,11 +195,11 @@ SELECT * FROM performance_schema.replication_group_members;
 ```
 ### node2
 Access MySQL server inside the container:
-```
-docker exec -it node2 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
+```console
+$ docker exec -it node2 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 ```
 Run these commands in server console:
-```
+```mysql
 SET @@GLOBAL.group_replication_group_name='8a94f357-aab4-11df-86ab-c80aa9429562';
 SET @@GLOBAL.group_replication_local_address='node2:6606';
 SET @@GLOBAL.group_replication_group_seeds='node1:6606,node2:6606,node3:6606';
@@ -212,11 +212,11 @@ SELECT * FROM performance_schema.replication_group_members;
 ### node3
 
 Access MySQL server inside the container:
-```
-docker exec -it node3 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
+```console
+$ docker exec -it node3 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 ```
 Run these commands in server console (now using the IPs from the containers, just as example):
-```
+```mysql
 SET @@GLOBAL.group_replication_group_name='8a94f357-aab4-11df-86ab-c80aa9429562';
 SET @@GLOBAL.group_replication_local_address='172.19.0.4:6606';
 SET @@GLOBAL.group_replication_group_seeds='172.19.0.2:6606,172.19.0.3:6606,172.19.0.4:6606';
@@ -234,8 +234,8 @@ By now, you should see:
 Docker allows us to drop the network from a container by just running a command.
 
 In another terminal, let's disconnect node3 from the network:
-```
-docker network disconnect group1 node3
+```console
+$ docker network disconnect group1 node3
 ```
 Running the query (*SELECT * FROM performance_schema.replication_group_members;*) in node3 terminal we should see:
 ![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries3.png)
@@ -244,25 +244,25 @@ Running the same query in node1 terminal, we noticed that node3 was expelled fro
 ![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries4.png)
 
 To kill running container(s):
-```
-docker kill node3
+```console
+$ docker kill node3
 ```
 
 ## Stopping containers, removing created network and image
 
 Stopping running container(s):
-```
-docker stop node1 node2
+```console
+$ docker stop node1 node2
 ```
 Stopping running MySQL inside the container (ex. node3)
-```
-docker exec node3 ./bin/mysqladmin -h node3 -P 3308 -u root shutdown
+```console
+$ docker exec node3 ./bin/mysqladmin -h node3 -P 3308 -u root shutdown
 ```
 Removing the created network:
-```
-docker network rm group1
+```console
+$ docker network rm group1
 ```
 Removing the created image:
-```
-docker rmi mysqlubuntu
+```console
+$ docker rmi mysqlubuntu
 ```
