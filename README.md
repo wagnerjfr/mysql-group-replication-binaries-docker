@@ -216,7 +216,7 @@ Access MySQL server inside the container:
 ```
 $ docker exec -it node3 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 ```
-Run these commands in server console (now using the IPs from the containers, just as example):
+Run these commands in server console:
 ```mysql
 SET @@GLOBAL.group_replication_group_name='8a94f357-aab4-11df-86ab-c80aa9429562';
 SET @@GLOBAL.group_replication_local_address='node3:6606';
