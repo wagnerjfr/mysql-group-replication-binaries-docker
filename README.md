@@ -182,8 +182,8 @@ $ docker exec -it node1 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 
 Run these commands in server console:
 ```mysql
-create user 'root'@'%';
-GRANT ALL  ON * . * TO root@'%';
+create user 'repl'@'%';
+GRANT ALL  ON * . * TO repl@'%';
 flush privileges;
 SET @@GLOBAL.group_replication_group_name='8a94f357-aab4-11df-86ab-c80aa9429562';
 SET @@GLOBAL.group_replication_local_address='node1:6606';
@@ -206,7 +206,7 @@ SET @@GLOBAL.group_replication_local_address='node2:6606';
 SET @@GLOBAL.group_replication_group_seeds='node1:6606,node2:6606,node3:6606';
 SET @@GLOBAL.group_replication_bootstrap_group=0;
 SET @@global.group_replication_recovery_retry_count=5;
-change master to master_user='root' for channel 'group_replication_recovery';
+change master to master_user='repl' for channel 'group_replication_recovery';
 START GROUP_REPLICATION;
 SELECT * FROM performance_schema.replication_group_members;
 ```
@@ -223,7 +223,7 @@ SET @@GLOBAL.group_replication_local_address='node3:6606';
 SET @@GLOBAL.group_replication_group_seeds='node1:6606,node2:6606,node3:6606';
 SET @@GLOBAL.group_replication_bootstrap_group=0;
 SET @@global.group_replication_recovery_retry_count=5;
-change master to master_user='root' for channel 'group_replication_recovery';
+change master to master_user='repl' for channel 'group_replication_recovery';
 START GROUP_REPLICATION;
 SELECT * FROM performance_schema.replication_group_members;
 ```
