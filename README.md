@@ -191,11 +191,12 @@ SET @@GLOBAL.group_replication_group_seeds='node1:6606,node2:6606,node3:6606';
 SET @@GLOBAL.group_replication_bootstrap_group=1;
 change master to master_user='root' for channel 'group_replication_recovery';
 START GROUP_REPLICATION;
+SET @@GLOBAL.group_replication_bootstrap_group=0;
 SELECT * FROM performance_schema.replication_group_members;
 ```
 ### node2
 Access MySQL server inside the container:
-```console
+```
 $ docker exec -it node2 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 ```
 Run these commands in server console:
@@ -212,14 +213,14 @@ SELECT * FROM performance_schema.replication_group_members;
 ### node3
 
 Access MySQL server inside the container:
-```console
+```
 $ docker exec -it node3 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 ```
 Run these commands in server console (now using the IPs from the containers, just as example):
 ```mysql
 SET @@GLOBAL.group_replication_group_name='8a94f357-aab4-11df-86ab-c80aa9429562';
-SET @@GLOBAL.group_replication_local_address='172.19.0.4:6606';
-SET @@GLOBAL.group_replication_group_seeds='172.19.0.2:6606,172.19.0.3:6606,172.19.0.4:6606';
+SET @@GLOBAL.group_replication_local_address='node3:6606';
+SET @@GLOBAL.group_replication_group_seeds='node1:6606,node2:6606,node3:6606';
 SET @@GLOBAL.group_replication_bootstrap_group=0;
 SET @@global.group_replication_recovery_retry_count=5;
 change master to master_user='root' for channel 'group_replication_recovery';
@@ -234,7 +235,7 @@ By now, you should see:
 Docker allows us to drop the network from a container by just running a command.
 
 In another terminal, let's disconnect node3 from the network:
-```console
+```
 $ docker network disconnect group1 node3
 ```
 Running the query (*SELECT * FROM performance_schema.replication_group_members;*) in node3 terminal we should see:
@@ -244,25 +245,25 @@ Running the same query in node1 terminal, we noticed that node3 was expelled fro
 ![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries4.png)
 
 To kill running container(s):
-```console
+```
 $ docker kill node3
 ```
 
 ## Stopping containers, removing created network and image
 
 Stopping running container(s):
-```console
+```
 $ docker stop node1 node2
 ```
 Stopping running MySQL inside the container (ex. node3)
-```console
+```
 $ docker exec node3 ./bin/mysqladmin -h node3 -P 3308 -u root shutdown
 ```
 Removing the created network:
-```console
+```
 $ docker network rm group1
 ```
 Removing the created image:
-```console
+```
 $ docker rmi mysqlubuntu
 ```
