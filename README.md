@@ -63,30 +63,30 @@ CMD rm -rf $PWD/$DATADIR && ./bin/mysqld --no-defaults --datadir=$PWD/$DATADIR \
 Now that the Dockerfile is ready, let’s create the image.
 
 Go to the folder where Dockerfile is and run this command:
-```console
+```
 $ docker build -t mysqlubuntu .
 ```
 A path is a mandatory argument for the build command. We used . as the path because we’re currently in the same directory. We also used the -t flag to tag the image.
 The name of the image is mysqlubuntu and can be any name you want.
 
 Check if the image was created:
-```console
+```
 $ docker images
 ```
 If the build was successful you should have:
 ```console
-$ docker images
 REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
 mysqlubuntu          latest              422a05ed125c        10 seconds ago      114MB
 ```
 ## Creating a Docker network
-```console
+Fire the following command to create a network:
+```
 $ docker network create group1
 ```
-Just need to create it once, unless you remove it from docker network.
+You just need to create it once, unless you remove it from Docker.
 
-To see all Docker Network:
-```console
+To see all Docker networks:
+```
 $ docker network ls
 ```
 
@@ -99,7 +99,7 @@ The command to start the containers is:
 *docker run -d --rm --net [network_name] --name [container_name] --hostname [container_hostname] -v [Path-MySQL-Folder]/:/mysql -e DATADIR=[data_directory] -e SERVERID=[server_id] -e PORT=[port_number]mysqlubuntu*
 
 Run the below commands:
-``` console
+``` 
 docker run -d --rm \
   --net group1 \
   --name node1 \
@@ -142,17 +142,17 @@ docker run -d --rm \
 | -e            | environment variable |
 
 The containers are running in background. To see the containers, run:
-```console
+```
 $ docker ps -a
 ```
 ![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries1.png)
 
 Fetch the logs of a container (ex. in node1), run:
-```console
+```
 $ docker logs node1
 ```
 To get container's IP from all the containers, run:
-```console
+```
 $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node1 node2 node3
 ```
 In our example, it prints something like:
@@ -162,7 +162,7 @@ In our example, it prints something like:
 172.19.0.4
 ```
 To fetch all the container's information:
-```console
+```
 $ docker inspect node1
 ```
 
@@ -172,7 +172,7 @@ Open 3 new terminals and run the below commands in each one:
 
 ### node1
 Access MySQL server inside the container:
-```console
+```
 $ docker exec -it node1 ./bin/mysql -uroot --socket=/tmp/mysql.0.sock
 ```
 | Command       | Description   |
