@@ -27,49 +27,20 @@ Download and unpack the tar file into a directory of your choice.
 In my example, I'm going to use: */home/wfranchi/MySQL/mysql-8.0.11*
 
 ## Building the Image
-Create a file named **Dockerfile** in a directory of your choice.
-
-Copy and paste the below content to the file. Save and close it.
-```Dockerfile
-FROM ubuntu:16.04
-
-MAINTAINER Wagner Franchin <wagner.franchin@oracle.com>
-
-RUN apt-get update && apt-get install -y \
-  libaio1 \
-  libnuma1 \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN useradd rpl_user
-
-WORKDIR /mysql
-
-USER rpl_user
-
-ENV SERVERID 1
-ENV DATADIR d0
-ENV PORT 3306
-
-CMD rm -rf $PWD/$DATADIR && ./bin/mysqld --no-defaults --datadir=$PWD/$DATADIR \
-  --basedir=$PWD --initialize-insecure && \
-  ./bin/mysqld --no-defaults --basedir=$PWD --datadir=$PWD/$DATADIR \
-  --socket=/tmp/mysql.0.sock --log-bin=mysql-bin-1.log --server_id=$SERVERID \
-  --port=$PORT --enforce-gtid-consistency --log-slave-updates --gtid-mode=on \
-  --transaction-write-set-extraction=XXHASH64 --binlog-checksum=NONE \
-  --master-info-repository=TABLE --relay_log_info_repository=TABLE \
-  --plugin-dir=lib/plugin/ --plugin-load=group_replication.so --relay-log-recovery=on \
-  --group_replication_start_on_boot=0
-```
-Now that the Dockerfile is ready, let’s create the image.
-
-Go to the folder where Dockerfile is and run this command:
+Let’s create the image by running this command:
 ```
 $ docker build -t mysqlubuntu .
 ```
+
 A path is a mandatory argument for the build command. We used . as the path because we’re currently in the same directory. We also used the -t flag to tag the image.
 The name of the image is mysqlubuntu and can be any name you want.
 
-Check if the image was created:
+The following output show be printed:
+```
+Successfully built 3c9769f24bf0
+Successfully tagged mysqlubuntu:latest
+```
+Check whether the image was created:
 ```
 $ docker images
 ```
@@ -100,36 +71,19 @@ The command to start the containers is:
 
 Run the below commands:
 ``` 
-docker run -d --rm \
+for N in 1 2 3
+do docker run -d --rm \
   --net group1 \
-  --name node1 \
-  --hostname node1 \
+  --name node$N \
+  --hostname node$N \
   -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql \
-  -e DATADIR='d0' \
-  -e SERVERID=1 \
+  -e DATADIR="d$N" \
+  -e SERVERID=$N \
   -e PORT=3308 \
   mysqlubuntu
-
-docker run -d --rm \
-  --net group1 \
-  --name node2 \
-  --hostname node2 \
-  -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql \
-  -e DATADIR='d1' \
-  -e SERVERID=2 \
-  -e PORT=3308 \
-  mysqlubuntu
-
-docker run -d --rm \
-  --net group1 \
-  --name node3 \
-  --hostname node3 \
-  -v /home/wfranchi/MySQL/mysql-8.0.11/:/mysql \
-  -e DATADIR='d2' \
-  -e SERVERID=3 \
-  -e PORT=3308 \
-  mysqlubuntu
+done
 ```
+
 | Command       | Description   |
 | ------------- |:-------------:|
 | docker run    | starts the container |
@@ -145,7 +99,7 @@ The containers are running in background. To see the containers, run:
 ```
 $ docker ps -a
 ```
-![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries1.png)
+![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/figures/Docker-GR-binaries1.png)
 
 Fetch the logs of a container (ex. in node1), run:
 ```
@@ -228,7 +182,7 @@ START GROUP_REPLICATION;
 SELECT * FROM performance_schema.replication_group_members;
 ```
 By now, you should see:
-![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries2.png)
+![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/figures/Docker-GR-binaries2.png)
 
 ## Dropping network in one of the nodes
 
@@ -239,10 +193,10 @@ In another terminal, let's disconnect node3 from the network:
 $ docker network disconnect group1 node3
 ```
 Running the query (*SELECT * FROM performance_schema.replication_group_members;*) in node3 terminal we should see:
-![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries3.png)
+![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/figures/Docker-GR-binaries3.png)
 
 Running the same query in node1 terminal, we noticed that node3 was expelled from the group:
-![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/Docker-GR-binaries4.png)
+![alt text](https://github.com/wagnerjfr/mysql-group-replication-binaries-docker/blob/master/figures/Docker-GR-binaries4.png)
 
 To kill running container(s):
 ```
