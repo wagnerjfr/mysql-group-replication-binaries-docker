@@ -60,6 +60,13 @@ To see all Docker networks:
 ```
 $ docker network ls
 ```
+> **Note**: When using MySQL version greater than or equal to 8.0.14, it's possible to use Docker network with IPv6 enabled.
+
+> To create a network:
+
+> $ docker network create --ipv6 --subnet 2a02:6b8:b010:9020:1::/80 group1
+
+> More information about IPv6 on Docker [here](http://collabnix.com/enabling-ipv6-functionality-for-docker-and-docker-compose/) and [here](https://docs.docker.com/v17.09/engine/userguide/networking/default_network/ipv6/#how-ipv6-works-on-docker).
 
 ## Creating 3 containers with shared MySQL
 You must have the binaries or compiled MySQL servers that can be executed in Ubuntu (since we are using Ubuntu as the OS in the container).
