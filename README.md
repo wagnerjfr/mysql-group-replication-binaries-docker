@@ -60,9 +60,15 @@ To see all Docker networks:
 ```
 $ docker network ls
 ```
-> **Note**: When using MySQL version greater than or equal to 8.0.14, it's possible to use Docker network with IPv6 enabled.
+This network by default is a IPv4 network.
 
-> To create a network:
+You can check it by running:
+```
+$ docker inspect -f '{{.EnableIPv6}}' groupnet
+```
+The output should be "false".
+
+> **Note**: To create a  Docker network with IPv6 enabled true:
 
 > $ docker network create --ipv6 --subnet 2a02:6b8:b010:9020:1::/80 group1
 
