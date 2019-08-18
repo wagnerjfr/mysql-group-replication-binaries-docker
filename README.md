@@ -79,7 +79,7 @@ It's also possible to use different MySQL versions.
 
 The command to start the containers is:
 
-*docker run -d --rm --net [network_name] --name [container_name] --hostname [container_hostname] -v [Path-MySQL-Folder]/:/mysql -e DATADIR=[data_directory] -e SERVERID=[server_id] -e PORT=[port_number]mysqlubuntu*
+*docker run -d --rm --net [**network_name**] --name [**container_name**] --hostname [**container_hostname**] -v [**Path-MySQL-Folder**]/:/mysql -e DATADIR=[**data_directory**] -e SERVERID=[**server_id**] -e PORT=[**port_number**] mysqlubuntu*
 
 Run the below commands:
 ``` 
