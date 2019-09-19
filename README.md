@@ -12,7 +12,7 @@ https://github.com/wagnerjfr/mysql-group-replication-docker
 
 ## Prerequisites
 1. Docker installed
-2. MySQL binaries compatible to run in Ubuntu
+2. MySQL binaries compatible to run on Ubuntu (which is the OS used in the Docker image)
 
 ## Overview
 We start by building our Docker image, then we are going to create a Docker network and later create a group replication topology with 3 group members in different hosts.
