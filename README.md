@@ -20,7 +20,7 @@ We start by building our Docker image, then we are going to create a Docker netw
 ## MySQL Download
 https://dev.mysql.com/downloads/mysql/
 
-You can choose any MySQL Community Server version (5.7, 8, or both) but you must select **Linux-Generic** in "Select Operating System". That's because we are going to run it in a Ubuntu Docker Image.
+You can choose any MySQL Community Server version (5.7, 8, or both) but you must select **Linux-Generic** in *"Select Operating System"*. That's because we are going to run it in a **Ubuntu Docker Image**.
 
 Download and unpack the tar file into a directory of your choice.
 
