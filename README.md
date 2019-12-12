@@ -38,7 +38,7 @@ A path is a mandatory argument for the build command. We used . as the path beca
 The name of the image is mysqlubuntu and can be any name you want.
 
 The following output show be printed:
-```
+```console
 Successfully built 3c9769f24bf0
 Successfully tagged mysqlubuntu:latest
 ```
