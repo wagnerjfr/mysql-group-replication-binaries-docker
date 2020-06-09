@@ -1,4 +1,4 @@
-# `MySQL Group Replication using MySQL binaries and Docker containers`
+# MySQL Group Replication using MySQL binaries and Docker containers
 Setting up Group Replication using MySQL binaries and Docker containers
 
 #### The MySQL Group Replication feature is a multi-master update anywhere replication plugin  for MySQL with built-in conflict detection and resolution, automatic distributed recovery and group membership.
